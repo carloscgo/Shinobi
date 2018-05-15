@@ -15,7 +15,7 @@ trait ShinobiTrait
     {
         $this->permissions = \CarlosCGO\Shinobi\Models\Permission::get();
     }
-
+ 
     /**
      * The shinobi cache tag used by the user model.
      *
