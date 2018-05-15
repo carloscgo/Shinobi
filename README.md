@@ -1,6 +1,6 @@
 CarlosCGO Shinobi
 ===================
-[![Laravel 5.5](https://img.shields.io/badge/Laravel-5.3-orange.svg?style=flat-square)](http://laravel.com)
+[![Laravel 5.5](https://img.shields.io/badge/Laravel-5.5-orange.svg?style=flat-square)](http://laravel.com)
 [![Source](http://img.shields.io/badge/source-carloscgo/shinobi-blue.svg?style=flat-square)](https://github.com/carloscgo/shinobi)
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://tldrlegal.com/license/mit-license)
 
