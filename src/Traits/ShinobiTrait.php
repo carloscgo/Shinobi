@@ -11,6 +11,11 @@ trait ShinobiTrait
         $this->roles = \CarlosCGO\Shinobi\Models\Role::get();
     }
 
+    public function setPermissions()
+    {
+        $this->permissions = \CarlosCGO\Shinobi\Models\Permission::get();
+    }
+
     /**
      * The shinobi cache tag used by the user model.
      *
@@ -158,6 +163,8 @@ trait ShinobiTrait
      */
     public function getUserPermissions()
     {
+        $this->setPermissions();
+
         return $this->permissions->pluck('slug')->all();
     }
 
