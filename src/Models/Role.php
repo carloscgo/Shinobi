@@ -5,9 +5,12 @@ namespace CarlosCGO\Shinobi\Models;
 use Config;
 use Illuminate\Database\Eloquent\Model;
 use CarlosCGO\Shinobi\Traits\PermissionTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Role extends Model
 {
+    use SoftDeletes;
+
     use PermissionTrait {
         flushPermissionCache as parentFlushPermissionCache;
     }
