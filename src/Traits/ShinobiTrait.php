@@ -6,16 +6,6 @@ trait ShinobiTrait
 {
     use PermissionTrait;
 
-    public function setRoles()
-    {
-        $this->roles = \CarlosCGO\Shinobi\Models\Role::get();
-    }
-
-    public function setPermissions()
-    {
-        $this->permissions = \CarlosCGO\Shinobi\Models\Permission::get();
-    }
- 
     /**
      * The shinobi cache tag used by the user model.
      *
@@ -50,10 +40,8 @@ trait ShinobiTrait
      */
     public function getRoles()
     {
-        $this->setRoles();
-
-        if (!is_null($this->roles)) {
-            return $this->roles->pluck('slug')->all();
+        if (!is_null($this->roles())) {
+            return $this->roles()->pluck('slug')->all();
         }
     }
 
@@ -68,12 +56,10 @@ trait ShinobiTrait
     {
         $slug = strtolower($slug);
 
-        $this->setRoles();
+        $roles = $this->RoleUsers()->with('Roles')->get();
 
-        foreach ($this->roles as $role) {
-            if ($role->slug == $slug) {
-                return true;
-            }
+        if ($roles[0]->Roles->slug == $slug) {
+            return true;
         }
 
         return false;
@@ -94,9 +80,7 @@ trait ShinobiTrait
             $roleId = \CarlosCGO\Shinobi\Models\Role::where('slug', $roleId)->pluck('id')->first();
         }
 
-        $this->setRoles();
-
-        $roles = $this->roles;
+        $roles = $this->roles()->get();
 
         if (!$roles->contains($roleId)) {
             return $this->roles()->attach($roleId);
@@ -163,9 +147,7 @@ trait ShinobiTrait
      */
     public function getUserPermissions()
     {
-        $this->setPermissions();
-
-        return $this->permissions->pluck('slug')->all();
+        return $this->permissions()->pluck('slug')->all();
     }
 
     /**
@@ -177,13 +159,17 @@ trait ShinobiTrait
     {
         $permissions = [[], $this->getUserPermissions()];
 
-        $this->setRoles();
+        $roles = $this->RoleUsers()->with(['Roles' => function ($query) {
+            return $query->with(['PermissionRoles' => function ($query) {
+                return $query->with('Permissions')->get();
+            }])->get();
+        }])->get();
 
-        foreach ($this->roles as $role) {
-            $permissions[] = $role->getPermissions();
+        foreach ($roles[0]->Roles->PermissionRoles as $item) {
+            $per[] = $item->Permissions->slug;
         }
 
-        return call_user_func_array('array_merge', $permissions);
+        return call_user_func_array('array_merge', [[], $per]);
     }
 
     /**
@@ -196,9 +182,7 @@ trait ShinobiTrait
      */
     public function can($permission, $arguments = [])
     {
-        $this->setRoles();
-
-        foreach ($this->roles as $role) {
+        foreach ($this->roles()->get() as $role) {
             if ($role->special === 'no-access') {
                 return false;
             }
@@ -220,9 +204,7 @@ trait ShinobiTrait
      */
     public function canAtLeast(array $permissions)
     {
-        $this->setRoles();
-
-        foreach ($this->roles as $role) {
+        foreach ($this->roles()->get() as $role) {
             if ($role->special === 'no-access') {
                 return false;
             }

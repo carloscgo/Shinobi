@@ -43,7 +43,7 @@ trait PermissionTrait
     public function getPermissions()
     {
         $primaryKey = $this[$this->primaryKey];
-        $cacheKey   = 'caffeinated.'.substr(static::getShinobiTag(), 0, -1).'.permissions.'.$primaryKey;
+        $cacheKey   = 'shinobi.'.substr(static::getShinobiTag(), 0, -1).'.permissions.'.$primaryKey;
 
         if (method_exists(app()->make('cache')->getStore(), 'tags')) {
             return app()->make('cache')->tags(static::getShinobiTag())->remember($cacheKey, 60, function () {
